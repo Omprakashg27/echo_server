@@ -1,47 +1,33 @@
-variable "vpc_id" {
-  type    = string
-  default = "vpc-01ae9b006e7bde114"
+provider "aws" {
+  region = "ap-southeast-2"
 }
 
-resource "aws_launch_configuration" "omprakash-node" {
+module "vpc" {
+  source = "../modules/vpc"
+}
 
-        "nodegroupName": "omprakash-node",
-        "clusterName": "omprakash-cluster",
-        "capacityType": "ON_DEMAND",
-        "scalingConfig": {
-            "minSize": 2,
-            "maxSize": 4,
-            "desiredSize": 2
-        },
-        "instanceTypes": [
-            "t2.small"
-        ],
-        "subnets": [
-            "subnet-039faf399a22703f7",
-            "subnet-0d86d0b1d023a35d6",
-            "subnet-0faa07c950201ee7d"
-        ],
-        "amiType": "AL2_x86_64",
-        "nodeRole": "arn:aws:iam::329082085800:role/default-eks-node-group-20230926134445948300000001",
-        "labels": {},
-        "resources": {
-            "autoScalingGroups": [
-                {
-                    "name": "eks-omprakash-node-02c6603c-e5d4-420b-527c-ebec3d5af2d1"
-                }
-            ]
-        },
-        "diskSize": 20,
-        "updateConfig": {
-            "maxUnavailable": 2
-        },
-        "tags": {}
+module "node_pool" {
+  source = "../modules/node_pool"
+  vpc_id = vpc-01ae9b006e7bde114
+}
+
+module "eks" {
+  source    = "terraform-aws-modules/eks/aws"
+  cluster_name = "omprakash-cluster"
+  subnets   = {"subnet-0faa07c950201ee7d","subnet-0d86d0b1d023a35d6","subnet-039faf399a22703f7"}
+  vpc_id    = vpc-01ae9b006e7bde114
+
+  node_groups = {
+    omprakash-node = {
+      desired_capacity = 2
+      max_capacity     = 4
+      min_capacity     = 2
+
+      key_name = "omprakash-key-pair"
     }
-}
-  
+  }
 }
 
-resource "aws_autoscaling_group" "omprakash-node" {
-                    "name": "eks-omprakash-node-02c6603c-e5d4-420b-527c-ebec3d5af2d1"
-                
+output "omprakash-cluster" {
+  value = omprakash-cluster
 }
