@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo Server</title>
+</head>
+<body>
+    <h1>Echo Server</h1>
+    <p>Received String: <strong id="echoString"></strong></p>
+    <p>Local IP Address: <strong id="localIp"></strong></p>
+
+    <script>
+        // Fetch and display the echo string from the URL
+        const echoString = new URLSearchParams(window.location.search).get('echo');
+        document.getElementById('echoString').textContent = echoString;
+
+        // Fetch and display the local IP address
+        fetch('/localip')
+            .then(response => response.text())
+            .then(localIp => {
+                document.getElementById('localIp').textContent = localIp;
+            });
+    </script>
+</body>
+</html>

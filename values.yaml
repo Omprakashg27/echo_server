@@ -1,0 +1,12 @@
+replicaCount: 1
+image:
+  repository: public.ecr.aws/z8r9g7l9/omprakash_echo
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  name: echo-server
+  type: LoadBalancer  # Change to LoadBalancer for public accessibility
+  port: 80  # Use port 80 for HTTP traffic
+
+resources: {}
